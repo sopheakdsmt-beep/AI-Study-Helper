@@ -1,1 +1,99 @@
-# AI-Study-Helper
+# StudyHelper
+
+AI-powered study web app. Upload notes (PDF, DOCX, TXT) or paste text to generate summaries, flashcards, quizzes, and chat with your material.
+
+## Tech stack
+
+- Next.js 14 (App Router) + TypeScript (strict)
+- Tailwind CSS + shadcn/ui
+- Supabase (Auth, Postgres, Storage, RLS)
+- Anthropic Claude API (server-side only)
+- Zod + React Hook Form
+
+## Phase status
+
+- **Phase 1 (current):** Project setup, Tailwind/shadcn, Supabase clients, auth pages, protected layout, dark mode
+- Phase 2: DB migration + RLS, dashboard CRUD
+- Phase 3: File upload and text extraction
+- Phase 4: Summary generation
+- Phase 5: Flashcards
+- Phase 6: Quiz
+- Phase 7: Chat with streaming
+- Phase 8: Language, export, rate limiting, polish, deploy
+
+## Prerequisites
+
+1. Node.js 18+
+2. A [Supabase](https://supabase.com) project
+3. (Later phases) An [Anthropic](https://console.anthropic.com) API key
+
+## Setup
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Fill in `.env.local`:
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server only; used in later phases) |
+| `ANTHROPIC_API_KEY` | Claude API key (Phase 4+) |
+| `ANTHROPIC_MODEL` | Model id, e.g. `claude-sonnet-4-20250514` |
+
+### Supabase Auth
+
+In the Supabase dashboard:
+
+1. **Authentication → Providers**
+   - Enable **Email**
+   - Enable **Google** and set Client ID / Secret from Google Cloud Console
+2. **Authentication → URL configuration**
+   - Site URL: `http://localhost:3000`
+   - Redirect URLs: `http://localhost:3000/auth/callback`
+
+Database tables and RLS land in Phase 2.
+
+## Run
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Phase 1 — how to test
+
+1. Visit `/` → redirects to `/login` when signed out.
+2. Open `/signup`, create an account with email/password (or Google if configured).
+3. Confirm you land on `/dashboard` with the protected header (theme toggle + user menu).
+4. Toggle light/dark/system theme.
+5. Log out from the user menu → back to `/login`.
+6. Visit `/dashboard` while signed out → redirected to `/login`.
+7. Log in again and confirm redirect back to the dashboard.
+
+## Scripts
+
+```bash
+npm run dev     # development server
+npm run build   # production build
+npm run start   # serve production build
+npm run lint    # ESLint
+```
+
+## Project structure
+
+```
+app/           # App Router pages and layouts
+components/    # UI, auth forms, layout
+lib/           # supabase, validators, utils
+types/         # shared TypeScript types
+supabase/      # migrations (Phase 2+)
+```
+
+## Deploy (Vercel)
+
+Deferred to Phase 8. Target platform: Vercel with the env vars above.
