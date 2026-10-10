@@ -2,14 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { NotesIngest } from "@/components/study-set/notes-ingest";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 interface StudySetPageProps {
   params: { id: string };
@@ -53,22 +47,11 @@ export default async function StudySetPage({ params }: StudySetPageProps) {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload coming in Phase 3</CardTitle>
-          <CardDescription>
-            Summary, Flashcards, Quiz, and Chat tabs will appear here after you
-            add notes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {studySet.raw_text
-              ? `${studySet.raw_text.slice(0, 280)}${studySet.raw_text.length > 280 ? "…" : ""}`
-              : "No notes uploaded yet. Return to the dashboard or wait for Phase 3 to add PDF/DOCX/TXT content."}
-          </p>
-        </CardContent>
-      </Card>
+      <NotesIngest
+        studySetId={studySet.id}
+        sourceType={studySet.source_type}
+        rawText={studySet.raw_text}
+      />
     </div>
   );
 }

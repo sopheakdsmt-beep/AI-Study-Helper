@@ -13,8 +13,8 @@ AI-powered study web app. Upload notes (PDF, DOCX, TXT) or paste text to generat
 ## Phase status
 
 - Phase 1: Project setup, Tailwind/shadcn, Supabase clients, auth pages, protected layout, dark mode
-- **Phase 2 (current):** DB migration + RLS, dashboard create/list/delete study sets
-- Phase 3: File upload and text extraction
+- Phase 2: DB migration + RLS, dashboard create/list/delete study sets
+- **Phase 3 (current):** File upload and text extraction + paste text
 - Phase 4: Summary generation
 - Phase 5: Flashcards
 - Phase 6: Quiz
@@ -89,9 +89,19 @@ Open [http://localhost:3000](http://localhost:3000). Always run npm commands fro
 2. Log in and open `/dashboard`.
 3. Click **New study set**, enter a title, choose English or Khmer, create.
 4. Confirm the set appears with date and zero item counts.
-5. Open the set → placeholder page at `/set/[id]`.
+5. Open the set → page at `/set/[id]`.
 6. Return to dashboard and delete the set → it disappears.
 7. (Optional) In another browser/account, confirm you cannot see another user’s sets (RLS).
+
+## Phase 3 — how to test
+
+1. Make sure you are on branch `cursor/studyhelper-phase3-ecf8` and ran `npm install`.
+2. Open a study set at `/set/[id]`.
+3. **Upload file** tab: drag-and-drop or browse a PDF, DOCX, or TXT (max 10MB).
+4. Confirm extracted text appears under **Stored notes**, with source type updated.
+5. **Paste text** tab: paste notes (20+ characters) → **Save pasted text**.
+6. Click **Clear** to remove stored notes.
+7. Rejected cases to try: empty file, >10MB file, unsupported extension.
 
 ## Scripts
 
@@ -106,8 +116,8 @@ npm run lint    # ESLint
 
 ```
 app/           # App Router pages, layouts, server actions
-components/    # UI, auth, dashboard, layout
-lib/           # supabase, validators, study-set helpers
+components/    # UI, auth, dashboard, study-set, layout
+lib/           # supabase, parsers, validators, helpers
 types/         # shared TypeScript types
 supabase/      # SQL migrations
 ```
