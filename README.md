@@ -12,8 +12,8 @@ AI-powered study web app. Upload notes (PDF, DOCX, TXT) or paste text to generat
 
 ## Phase status
 
-- **Phase 1 (current):** Project setup, Tailwind/shadcn, Supabase clients, auth pages, protected layout, dark mode
-- Phase 2: DB migration + RLS, dashboard CRUD
+- Phase 1: Project setup, Tailwind/shadcn, Supabase clients, auth pages, protected layout, dark mode
+- **Phase 2 (current):** DB migration + RLS, dashboard create/list/delete study sets
 - Phase 3: File upload and text extraction
 - Phase 4: Summary generation
 - Phase 5: Flashcards
@@ -34,6 +34,8 @@ npm install
 cp .env.example .env.local
 ```
 
+On Windows Command Prompt use `copy .env.example .env.local` instead of `cp`.
+
 Fill in `.env.local`:
 
 | Variable | Description |
@@ -50,12 +52,20 @@ In the Supabase dashboard:
 
 1. **Authentication → Providers**
    - Enable **Email**
-   - Enable **Google** and set Client ID / Secret from Google Cloud Console
+   - For local testing, disable **Confirm email** so you can log in immediately
+   - Enable **Google** (optional) and set Client ID / Secret
 2. **Authentication → URL configuration**
    - Site URL: `http://localhost:3000`
    - Redirect URLs: `http://localhost:3000/auth/callback`
 
-Database tables and RLS land in Phase 2.
+### Database (Phase 2)
+
+1. Open Supabase → **SQL Editor**
+2. Paste the full contents of  
+   `supabase/migrations/20260310000000_init_schema.sql`
+3. Run the script
+
+This creates all tables (`profiles`, `study_sets`, `summaries`, `flashcards`, `quizzes`, `quiz_questions`, `quiz_attempts`, `chat_messages`), helper functions, the signup → profile trigger, and RLS policies so users can only access their own data.
 
 ## Run
 
@@ -63,17 +73,25 @@ Database tables and RLS land in Phase 2.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Always run npm commands from the project folder (the one that contains `package.json`).
 
 ## Phase 1 — how to test
 
 1. Visit `/` → redirects to `/login` when signed out.
-2. Open `/signup`, create an account with email/password (or Google if configured).
-3. Confirm you land on `/dashboard` with the protected header (theme toggle + user menu).
+2. Open `/signup`, create an account with email/password.
+3. Confirm you land on `/dashboard`.
 4. Toggle light/dark/system theme.
-5. Log out from the user menu → back to `/login`.
-6. Visit `/dashboard` while signed out → redirected to `/login`.
-7. Log in again and confirm redirect back to the dashboard.
+5. Log out, then log in again.
+
+## Phase 2 — how to test
+
+1. Apply the SQL migration (see above).
+2. Log in and open `/dashboard`.
+3. Click **New study set**, enter a title, choose English or Khmer, create.
+4. Confirm the set appears with date and zero item counts.
+5. Open the set → placeholder page at `/set/[id]`.
+6. Return to dashboard and delete the set → it disappears.
+7. (Optional) In another browser/account, confirm you cannot see another user’s sets (RLS).
 
 ## Scripts
 
@@ -87,11 +105,11 @@ npm run lint    # ESLint
 ## Project structure
 
 ```
-app/           # App Router pages and layouts
-components/    # UI, auth forms, layout
-lib/           # supabase, validators, utils
+app/           # App Router pages, layouts, server actions
+components/    # UI, auth, dashboard, layout
+lib/           # supabase, validators, study-set helpers
 types/         # shared TypeScript types
-supabase/      # migrations (Phase 2+)
+supabase/      # SQL migrations
 ```
 
 ## Deploy (Vercel)
